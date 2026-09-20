@@ -21,16 +21,6 @@ Bu depo; iş deneyimlerimi, projelerimi ve teknik uzmanlıklarımı bir araya ge
 - **Veri ve ölçümleme:** Client-side ve server-side tracking, Conversion API, çevrimdışı dönüşümler ve analitik altyapıları.
 - **AI ve otomasyon:** Semantik arama, RAG, vektör arama ve iş akışı otomasyonları.
 
-## Portfolyo deneyimi
-
-- Koyu tema, lime vurgular ve büyük tipografi.
-- Fare hareketlerine tepki veren, Canvas üzerinde çizilen üç boyutlu geometrik form.
-- Animasyonu duraklatma kontrolü ve azaltılmış hareket tercihine uyum.
-- Ekran dışında veya sekme arka plandayken duran animasyon.
-- Mobil ve masaüstüne uyumlu sayfa düzeni.
-- Açılabilir proje detayları ve ayrıntılı iş deneyimleri.
-- Eğitim, sertifikalar ve teknik araçlar bölümü.
-- Doğrudan WhatsApp’a yönlenen iletişim çağrıları.
 
 ## Seçilmiş çalışmalar
 
