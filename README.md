@@ -6,7 +6,6 @@
 
 Yazılımın gücünü pazarlamanın stratejisiyle buluşturuyorum. Fikirleri çalışan ürünlere, veriyi ölçülebilir büyümeye dönüştürüyorum.
 
-Bu depo; iş deneyimlerimi, projelerimi ve teknik uzmanlıklarımı bir araya getiren kişisel portfolyo sitemin kaynak kodlarını içerir.
 
 [Web Sitem](https://seerkankaya.com/) · [LinkedIn](https://www.linkedin.com/in/seerkankaya/) · [WhatsApp](https://wa.me/905396714940)
 
@@ -33,7 +32,6 @@ Bu depo; iş deneyimlerimi, projelerimi ve teknik uzmanlıklarımı bir araya ge
 | **Gerçek Zamanlı Dashboard** | Reklam harcamaları ve gelir verilerinin canlı görselleştirilmesi. |
 | **Otomatik Kreatif Test Aracı** | Görüntü işleme ve veri analiziyle AI destekli reklam kreatif değerlendirmesi. |
 
-Bu çalışmalar portfolyoda tanıtılır; bu depo portfolyo sitesinin kaynak kodlarını içerir.
 
 ## İş deneyimi
 
@@ -49,18 +47,7 @@ Bu çalışmalar portfolyoda tanıtılır; bu depo portfolyo sitesinin kaynak ko
 | **Asnorm** | Google Ads Manager | Aralık 2019 – Aralık 2020 |
 | **TÜMKİAD Kahramanmaraş** | Webmaster | Şubat 2018 – Nisan 2019 |
 
-## Sitenin teknolojileri
 
-Portfolyo; **HTML5, CSS3 ve vanilla JavaScript** ile hazırlanmış statik bir web sitesidir. Üç boyutlu görsel, **Canvas 2D API** üzerinde perspektif projeksiyonuyla çizilir; harici bir 3D motoru veya model dosyası gerektirmez. Tipografide Google Fonts üzerinden **Manrope** kullanılır.
-
-| Katman | Teknoloji |
-| --- | --- |
-| Sayfa yapısı | HTML5 |
-| Tasarım ve responsive düzen | CSS3, Grid, Flexbox |
-| Etkileşimler | Vanilla JavaScript, native dialog ve details |
-| Üç boyutlu animasyon | Canvas 2D, requestAnimationFrame |
-| Kaynak kod deposu | GitHub |
-| Yayın altyapısı | Cloudflare Pages |
 
 ## İletişim
 
