@@ -1,4 +1,6 @@
-# Serkan Kaya — Kişisel Portfolyo
+# Serkan Kaya — Tracking | Technical SEO~GEO | Software | AI Growth  Hacker | Lead Generation | E-Commerce
+
+
 
 **Yazılım × Veri × Büyüme**
 
