@@ -133,13 +133,100 @@ const jobs=[
 document.querySelector('#timeline').innerHTML=jobs.map((j,i)=>`<details class="job" ${i===0?'open':''}><summary><div><span class="date">${j[2]}</span><h3>${j[0]}${i===0?'<span class="current-tag">GÜNCEL</span>':''}</h3><span class="role">${j[1]}</span></div><span class="plus" aria-hidden="true">+</span></summary><div class="job-body">${j[3]?`<p>${j[3]}</p>`:''}<ul>${j[4].map(t=>`<li>${t}</li>`).join('')}</ul></div></details>`).join('');
 const dialog=document.querySelector('#project-dialog');document.querySelector('.close-dialog').addEventListener('click',()=>dialog.close());dialog.addEventListener('click',e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dialog.close();}});
 document.querySelector('#year').textContent=new Date().getFullYear();function updateClock(){document.querySelector('#clock').textContent=new Intl.DateTimeFormat('tr-TR',{timeZone:'Europe/Istanbul',hour:'2-digit',minute:'2-digit'}).format(new Date());}updateClock();setInterval(updateClock,60000);
-// Lightweight perspective projection of a torus knot: no 3D framework or model download.
-const canvas=document.querySelector('#sculpture'),ctx=canvas.getContext('2d');const motion=document.querySelector('#motion');const reduced=matchMedia('(prefers-reduced-motion: reduce)');let paused=reduced.matches,visible=true,frame=0,w=0,h=0,angle=.45,px=0,py=0;const points=[];const rings=180,sides=22;
-function center(t){return [(2+Math.cos(3*t))*.72*Math.cos(2*t),(2+Math.cos(3*t))*.72*Math.sin(2*t),Math.sin(3*t)*.85];}
-for(let i=0;i<rings;i++){const t=i/rings*Math.PI*2,c=center(t),n=center(t+.001);let tangent=n.map((v,k)=>v-c[k]);let l=Math.hypot(...tangent);tangent=tangent.map(v=>v/l);let normal=[-tangent[1],tangent[0],0];l=Math.hypot(...normal);normal=normal.map(v=>v/l);const b=[tangent[1]*normal[2]-tangent[2]*normal[1],tangent[2]*normal[0]-tangent[0]*normal[2],tangent[0]*normal[1]-tangent[1]*normal[0]];for(let j=0;j<sides;j++){const a=j/sides*Math.PI*2;points.push(c.map((v,k)=>v+.39*(normal[k]*Math.cos(a)+b[k]*Math.sin(a))));}}
-function resize(){const rect=canvas.getBoundingClientRect();w=rect.width;h=rect.height;const dpr=Math.min(devicePixelRatio||1,1.7);canvas.width=Math.round(w*dpr);canvas.height=Math.round(h*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);draw();}
-function draw(){ctx.clearRect(0,0,w,h);const glow=ctx.createRadialGradient(w*.5,h*.46,10,w*.5,h*.46,w*.48);glow.addColorStop(0,'rgba(127,167,54,.13)');glow.addColorStop(1,'rgba(16,17,15,0)');ctx.fillStyle=glow;ctx.fillRect(0,0,w,h);const ay=angle+px*.2,ax=.65+py*.2,az=-.35;const cy=Math.cos(ay),sy=Math.sin(ay),cx=Math.cos(ax),sx=Math.sin(ax),cz=Math.cos(az),sz=Math.sin(az);const scale=Math.min(w*.185,h*.19);const projected=points.map(([x,y,z])=>{let x1=x*cy+z*sy,z1=-x*sy+z*cy,y1=y*cx-z1*sx,z2=y*sx+z1*cx,x2=x1*cz-y1*sz,y2=x1*sz+y1*cz;const depth=7/(7+z2);return [w*.51+x2*scale*depth,h*.48+y2*scale*depth,z2,depth];});
-// Fine wireframe reveals the real depth and topology of the rotating form.
-for(let i=0;i<rings;i+=2){for(let j=0;j<sides;j++){const a=projected[i*sides+j],b=projected[i*sides+(j+1)%sides];ctx.strokeStyle=`rgba(168,211,106,${.08+(1-(a[2]+2.8)/5.6)*.34})`;ctx.lineWidth=.55;ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke();}}
-projected.sort((a,b)=>b[2]-a[2]);for(const p of projected){const light=Math.max(.12,Math.min(1,(3-p[2])/5.5));ctx.fillStyle=`rgba(195,243,107,${light*.85})`;ctx.beginPath();ctx.arc(p[0],p[1],Math.max(.45,1.1*p[3]),0,Math.PI*2);ctx.fill();}}
-let last=0;function animate(time){frame=0;if(paused||!visible||document.hidden)return;if(time-last>32){angle+=.004;draw();last=time;}frame=requestAnimationFrame(animate);}function sync(){motion.setAttribute('aria-pressed',String(paused));motion.setAttribute('aria-label',paused?'Animasyonu oynat':'Animasyonu duraklat');motion.textContent=paused?'▷':'Ⅱ';if(frame)cancelAnimationFrame(frame);frame=0;if(!paused&&visible&&!document.hidden)frame=requestAnimationFrame(animate);else draw();}motion.addEventListener('click',()=>{paused=!paused;sync();});reduced.addEventListener('change',e=>{paused=e.matches;sync();});canvas.addEventListener('pointermove',e=>{if(paused)return;const r=canvas.getBoundingClientRect();px=(e.clientX-r.left)/w-.5;py=(e.clientY-r.top)/h-.5;});canvas.addEventListener('pointerleave',()=>{px=py=0;});new ResizeObserver(resize).observe(canvas);new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;sync();}).observe(canvas);document.addEventListener('visibilitychange',sync);resize();sync();
+// Load the GLB viewer separately so the rest of the portfolio stays interactive.
+const viewer = document.querySelector('#sculpture');
+const motion = document.querySelector('#motion');
+const status = document.querySelector('#model-status');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let paused = reducedMotion.matches;
+let visible = true;
+let ready = false;
+
+function syncModelMotion() {
+  const playing = ready && !paused && visible && !document.hidden;
+  viewer.autoRotate = playing;
+  if (ready && viewer.availableAnimations.length) {
+    if (playing) viewer.play();
+    else viewer.pause();
+  }
+  motion.setAttribute('aria-pressed', String(paused));
+  motion.setAttribute('aria-label', paused ? 'Animasyonu oynat' : 'Animasyonu duraklat');
+  motion.textContent = paused ? '▷' : 'Ⅱ';
+}
+function modelError() {
+  ready = false;
+  motion.disabled = true;
+  status.hidden = false;
+  status.textContent = '3D model yüklenemedi. Sayfayı yenileyerek tekrar deneyebilirsin.';
+  syncModelMotion();
+}
+viewer.addEventListener('load', () => {
+  ready = true;
+  status.hidden = true;
+  motion.disabled = false;
+  syncModelMotion();
+});
+viewer.addEventListener('error', modelError);
+motion.addEventListener('click', () => { paused = !paused; syncModelMotion(); });
+reducedMotion.addEventListener('change', event => { paused = event.matches; syncModelMotion(); });
+new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; syncModelMotion(); }).observe(viewer);
+document.addEventListener('visibilitychange', syncModelMotion);
+syncModelMotion();
+import('@google/model-viewer').then(() => {
+  // Vite includes and fingerprints the local model in production builds.
+  viewer.src = new URL('./serkankaya.glb', import.meta.url).href;
+}).catch(modelError);
+
+// Accessible expertise tabs; animate only when the visitor chooses a discipline.
+const expertiseTabs = [...document.querySelectorAll('.expertise-tabs [role="tab"]')];
+const expertisePanels = [...document.querySelectorAll('.expertise-panel')];
+let expertiseAnimation;
+function selectExpertise(index, focus = false) {
+  expertiseAnimation?.cancel();
+  expertiseTabs.forEach((tab, i) => {
+    tab.setAttribute('aria-selected', String(i === index));
+    tab.tabIndex = i === index ? 0 : -1;
+    expertisePanels[i].hidden = i !== index;
+    expertisePanels[i].inert = i !== index;
+  });
+  document.querySelector('.expertise-count').innerHTML = `0${index + 1} <span>/ 05</span>`;
+  if (focus) expertiseTabs[index].focus();
+  if (!reducedMotion.matches) expertiseAnimation = expertisePanels[index].animate(
+    [{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'translateY(0)' }],
+    { duration: 380, easing: 'cubic-bezier(.2,.7,.2,1)' }
+  );
+}
+expertiseTabs.forEach((tab, index) => {
+  expertisePanels[index].inert = index !== 0;
+  tab.addEventListener('click', () => {
+    if (tab.getAttribute('aria-selected') !== 'true') selectExpertise(index);
+  });
+  tab.addEventListener('keydown', event => {
+    let next;
+    if (event.key === 'ArrowRight') next = (index + 1) % expertiseTabs.length;
+    if (event.key === 'ArrowLeft') next = (index - 1 + expertiseTabs.length) % expertiseTabs.length;
+    if (event.key === 'Home') next = 0;
+    if (event.key === 'End') next = expertiseTabs.length - 1;
+    if (next !== undefined) { event.preventDefault(); selectExpertise(next, true); }
+  });
+});
+
+// Mobile disclosure navigation: native button, Escape support, no hidden focus targets.
+const menuToggle = document.querySelector('.mobile-menu-toggle');
+const header = document.querySelector('.header');
+const navigation = document.querySelector('#primary-navigation');
+function setMenu(open, restoreFocus = false) {
+  header.classList.toggle('menu-open', open);
+  menuToggle.setAttribute('aria-expanded', String(open));
+  menuToggle.setAttribute('aria-label', open ? 'Menüyü kapat' : 'Menüyü aç');
+  if (restoreFocus) menuToggle.focus();
+}
+menuToggle.addEventListener('click', () => setMenu(menuToggle.getAttribute('aria-expanded') !== 'true'));
+navigation.addEventListener('click', event => { if (event.target.closest('a')) setMenu(false); });
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && header.classList.contains('menu-open')) setMenu(false, true);
+});
+document.addEventListener('click', event => {
+  if (!header.contains(event.target) && header.classList.contains('menu-open')) setMenu(false);
+});
+matchMedia('(max-width: 700px)').addEventListener('change', () => setMenu(false));
