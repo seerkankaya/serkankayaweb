@@ -116,7 +116,7 @@ export const EXPERIENCE: ExperienceItem[] = [
   {
     id: 7,
     role: 'Webmaster',
-    company: 'TÜMKİAD Kahramanmaraş',
+    company: 'TÜMKİAD',
     period: 'Şubat 2018 — Nisan 2019',
     description: [
       'Websitelerdeki içeriklerin düzenli kontrolü, güncellenmesi ve doğruluğunun sağlanması.',
