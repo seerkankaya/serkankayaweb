@@ -116,7 +116,7 @@ const jobs=[
     ]
   ],
   [
-    "TÜMKİAD Kahramanmaraş",
+    "TÜMKİAD",
     "Webmaster",
     "ŞUBAT 2018 — NİSAN 2019",
     "",
